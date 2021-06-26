@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Image, Text, Heading, Stack, Button } from "@chakra-ui/react";
 import { Moralis } from "moralis";
 
-function ShowTimelineComponent({ allMemes, fetchAllMemes }) {
+function ShowTimelineLoggedInComponent({ allMemes, fetchAllMemes }) {
   let currentUser = Moralis.User.current();
 
   useEffect(() => {
@@ -20,10 +20,8 @@ function ShowTimelineComponent({ allMemes, fetchAllMemes }) {
         {meme.attributes.description}
       </Text>
       {/* <Text m="2" key={`Owner` + meme.id}>
-        <strong>Meme Owner: </strong>{" "}
-        {meme.attributes.owner.attributes.username !== undefined
-          ? `${meme.attributes.owner.attributes.username}`
-          : " Not available"}
+        <strong>Meme Owner: </strong>
+        {meme.attributes.owner.id}
       </Text> */}
       <Text m="2">
         Link:{" "}
@@ -36,6 +34,25 @@ function ShowTimelineComponent({ allMemes, fetchAllMemes }) {
         <strong>Votes: </strong>
         {meme.attributes.votes !== undefined ? meme.attributes.votes : ""}
       </Text>
+      {currentUser.attributes.username !==
+        meme.attributes.owner.attributes.username &&
+        !meme.attributes.voters.includes(currentUser.id) && (
+          <Button
+            onClick={async (event) => {
+              const Memes = Moralis.Object.extend("Memes");
+              const query = new Moralis.Query(Memes);
+              const toUpdate = await query.get(meme.id);
+              await toUpdate.increment("votes");
+              toUpdate.save();
+              window.location.reload();
+            }}
+          >
+            Vote
+          </Button>
+        )}
+      {/* {currentUser.attributes.username !==
+        meme.attributes.owner.attributes.username &&
+        meme.attributes.voters.includes(currentUser) && <Button>Unvote</Button>} */}
     </Box>
   ));
 
@@ -47,4 +64,4 @@ function ShowTimelineComponent({ allMemes, fetchAllMemes }) {
   );
 }
 
-export default ShowTimelineComponent;
+export default ShowTimelineLoggedInComponent;

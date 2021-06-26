@@ -9,10 +9,10 @@ function ShowMemes({ results, fetchUsersMemes }) {
         <strong>Title: </strong>
         {meme.attributes.name}
       </Text>
-      <Text key={`Owner` + meme.id}>
+      {/* <Text key={`Owner` + meme.id}>
         <strong>Contributor: </strong>{" "}
         {meme.attributes.owner.attributes.username}
-      </Text>
+      </Text> */}
       <Text m="2" key={`Description` + meme.id}>
         <strong>Description: </strong>
         {meme.attributes.description}

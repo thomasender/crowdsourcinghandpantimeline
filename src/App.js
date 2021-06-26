@@ -19,6 +19,7 @@ import UploadComponent from "./components/UploadComponent";
 import GreetUser from "./components/GreetUser";
 import ShowMemes from "./components/ShowMemes";
 import ShowTimelineComponent from "./components/ShowTimelineComponent";
+import ShowTimelineLoggedInComponent from "./components/ShowTimelineLoggedInComponent";
 import Moralis from "moralis/lib/browser/Parse";
 
 function App() {
@@ -26,8 +27,6 @@ function App() {
   const [user, setUser] = useState();
   const [results, setResults] = useState([]);
   const [allMemes, setAllMemes] = useState([]);
-
-  useEffect(() => {});
 
   //Fetches and sets current User from Moralis session
   const setCurrentUser = async () => {
@@ -54,10 +53,8 @@ function App() {
   const fetchAllMemes = async () => {
     const query = new Moralis.Query("Memes");
     const allMemes = await query.find();
-    if (allMemes !== undefined) {
-      setAllMemes(allMemes);
-      console.log(allMemes);
-    }
+    console.log("AM", allMemes);
+    setAllMemes(allMemes);
   };
 
   if (isAuthenticated) {
@@ -76,7 +73,7 @@ function App() {
               <TabPanel>
                 {" "}
                 {allMemes !== undefined ? (
-                  <ShowTimelineComponent
+                  <ShowTimelineLoggedInComponent
                     fetchAllMemes={fetchAllMemes}
                     allMemes={allMemes}
                   />

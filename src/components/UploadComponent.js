@@ -4,6 +4,7 @@ import { Box, Button, Input, Textarea, Text } from "@chakra-ui/react";
 
 function UploadComponent({ user, fetchUsersMemes }) {
   const currentUser = Moralis.User.current();
+
   const [name, setName] = useState();
   const [file, setFile] = useState();
   const [description, setDescription] = useState();
@@ -15,18 +16,19 @@ function UploadComponent({ user, fetchUsersMemes }) {
     await MoralisFile.saveIPFS();
     const ipfs = await MoralisFile.ipfs();
     const hash = await MoralisFile.hash();
-    var votes = 0;
+
     console.log("Meme created. Fetching data...");
 
     if (ipfs && hash) {
-      const newMeme = new Moralis.Object("Memes");
+      const NewMeme = new Moralis.Object.extend("Memes");
+      const newMeme = new NewMeme();
       newMeme.set("ipfs", ipfs);
       newMeme.set("hash", hash);
       newMeme.set("file", MoralisFile);
       newMeme.set("owner", currentUser);
       newMeme.set("name", name);
       newMeme.set("description", description);
-      newMeme.set("votes:", votes);
+      newMeme.set("votes", 0);
       newMeme.set("voters", []);
       await newMeme.save();
       await fetchUsersMemes();
