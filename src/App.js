@@ -144,7 +144,9 @@ function App() {
               <SignUp />
             </TabPanel>
             <TabPanel>
-              <Text color="red">Login or SignUp to use all features</Text>
+              <Text color="red" align="center">
+                Login or SignUp to use all features
+              </Text>
               {isInitialized === true ? (
                 <ShowTimelineComponent
                   fetchAllMemes={fetchAllMemes}

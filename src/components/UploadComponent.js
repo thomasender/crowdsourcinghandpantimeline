@@ -1,29 +1,20 @@
 import React, { useState } from "react";
 import { Moralis } from "moralis";
-import {
-  Box,
-  Button,
-  Input,
-  Textarea,
-  Text,
-  useControllableState,
-} from "@chakra-ui/react";
-import {
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  FormHelperText,
-} from "@chakra-ui/react";
+import { Box, Button, Input, Textarea, Text } from "@chakra-ui/react";
+import { FormControl, FormLabel } from "@chakra-ui/react";
 import { Calendar } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
-function UploadComponent({ user, fetchUsersMemes }) {
+function UploadComponent({ fetchUsersMemes }) {
   const currentUser = Moralis.User.current();
 
   const [name, setName] = useState();
+  const titleInputRef = React.useRef();
   const [file, setFile] = useState();
+  const fileInputRef = React.useRef();
   const [description, setDescription] = useState();
+  const descriptionInputRef = React.useRef();
   const [isUploading, setIsUploading] = useState(false);
   const [value, updateValue] = useState(new Date());
   const [date, setDate] = useState(new Date());
@@ -54,8 +45,13 @@ function UploadComponent({ user, fetchUsersMemes }) {
     newMeme.set("voters", []);
 
     await newMeme.save();
-
     console.log("Contribution saved to database");
+
+    //Clean up
+    titleInputRef.current.value = "";
+    setName("");
+    descriptionInputRef.current.value = "";
+    setDescription("");
 
     await fetchUsersMemes();
     console.log("Fetching user contributions");
@@ -84,7 +80,6 @@ function UploadComponent({ user, fetchUsersMemes }) {
 
   const handleUpload = async () => {
     setIsUploading(true);
-
     const MoralisFile = new Moralis.File(file.name, file);
     await MoralisFile.saveIPFS();
     const ipfs = await MoralisFile.ipfs();
@@ -105,8 +100,14 @@ function UploadComponent({ user, fetchUsersMemes }) {
     newMeme.set("voters", []);
 
     await newMeme.save();
-
     console.log("Contribution saved to database");
+    //Clean up
+    titleInputRef.current.value = "";
+    setName("");
+    descriptionInputRef.current.value = "";
+    setDescription("");
+    fileInputRef.current.value = "";
+    setFile(null);
 
     await fetchUsersMemes();
     console.log("Fetching user contributions");
@@ -126,6 +127,7 @@ function UploadComponent({ user, fetchUsersMemes }) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           textAlign="center"
+          ref={titleInputRef}
         />
       </FormControl>
 
@@ -145,6 +147,7 @@ function UploadComponent({ user, fetchUsersMemes }) {
           onChange={(e) => setDescription(e.target.value)}
           textAlign="center"
           isRequired
+          ref={descriptionInputRef}
         />
       </FormControl>
       <Text textAlign="center">
@@ -157,21 +160,36 @@ function UploadComponent({ user, fetchUsersMemes }) {
         onChange={(e) => {
           setFile(e.target.files[0]);
         }}
+        ref={fileInputRef}
       />
-      <Box align="center">
-        <Button
-          m="2"
-          onClick={() => {
-            if (file !== undefined) {
-              handleUpload();
-            } else {
-              handleUploadNoFile();
-            }
-          }}
-        >
-          Submit Contribution
-        </Button>
-      </Box>
+      {isUploading === false ? (
+        <Box align="center">
+          <Button
+            m="2"
+            onClick={() => {
+              if (file !== undefined) {
+                handleUpload();
+              } else {
+                handleUploadNoFile();
+              }
+            }}
+          >
+            Submit Contribution
+          </Button>
+        </Box>
+      ) : (
+        <Box align="center">
+          <Button
+            m="2"
+            isLoading
+            loadingText="Uploading..."
+            colorScheme="teal"
+            variant="outline"
+          >
+            Uploading...
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 }
