@@ -5,8 +5,13 @@ import { Moralis } from "moralis";
 function ShowTimelineComponent({ allMemes, fetchAllMemes }) {
   let currentUser = Moralis.User.current();
 
-  useEffect(() => {
+  useEffect(async () => {
     fetchAllMemes();
+    let query = new Moralis.Query("Memes");
+    let subscription = await query.subscribe();
+    subscription.on("create", fetchAllMemes);
+    subscription.on("update", fetchAllMemes);
+    subscription.on("delete", fetchAllMemes);
   }, []);
 
   const memes = allMemes.map((meme, i) => (

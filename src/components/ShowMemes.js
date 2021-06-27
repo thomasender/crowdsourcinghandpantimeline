@@ -44,7 +44,6 @@ function ShowMemes({ results, fetchUsersMemes }) {
           const query = new Moralis.Query(Memes);
           const toDelete = await query.get(meme.id);
           await toDelete.destroy();
-          window.location.reload();
         }}
       >
         Delete Contribution
@@ -52,8 +51,13 @@ function ShowMemes({ results, fetchUsersMemes }) {
     </Box>
   ));
 
-  useEffect(() => {
+  useEffect(async () => {
     fetchUsersMemes();
+    let query = new Moralis.Query("Memes");
+    let subscription = await query.subscribe();
+    subscription.on("create", fetchUsersMemes);
+    subscription.on("update", fetchUsersMemes);
+    subscription.on("delete", fetchUsersMemes);
   }, []);
 
   return (

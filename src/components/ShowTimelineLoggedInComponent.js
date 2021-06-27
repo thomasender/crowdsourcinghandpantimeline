@@ -10,6 +10,8 @@ function ShowTimelineLoggedInComponent({ allMemes, fetchAllMemes }) {
     let query = new Moralis.Query("Memes");
     let subscription = await query.subscribe();
     subscription.on("create", fetchAllMemes);
+    subscription.on("update", fetchAllMemes);
+    subscription.on("delete", fetchAllMemes);
   }, []);
 
   const memes = allMemes.map((meme, i) => (
@@ -60,7 +62,6 @@ function ShowTimelineLoggedInComponent({ allMemes, fetchAllMemes }) {
             await toUpdate.addUnique("voters", currentUser.id);
             await toUpdate.save();
             console.log(toUpdate);
-            window.location.reload();
           }}
         >
           Vote
@@ -85,7 +86,6 @@ function ShowTimelineLoggedInComponent({ allMemes, fetchAllMemes }) {
             }
             await toUpdate.set("voters", voters);
             await toUpdate.save();
-            window.location.reload();
           }}
         >
           Unvote
