@@ -43,7 +43,15 @@ function App() {
     const query = new Moralis.Query("Memes");
     query.equalTo("owner", Moralis.User.current());
     const results = await query.find();
+    console.log(results);
+    results.sort(function (a, b) {
+      var c = new Date(a.attributes.dateOfConcern);
+      var d = new Date(b.attributes.dateOfConcern);
+      return c - d;
+    });
+    console.log("sorted", results);
     // alert("Retrieved " + results.length + " memes.");
+
     if (results !== undefined && results.length > 0) {
       setResults(results);
       //console.log(results);
@@ -53,7 +61,11 @@ function App() {
   const fetchAllMemes = async () => {
     const query = new Moralis.Query("Memes");
     const allMemes = await query.find();
-    console.log("AM", allMemes);
+    allMemes.sort(function (a, b) {
+      var c = new Date(a.attributes.dateOfConcern);
+      var d = new Date(b.attributes.dateOfConcern);
+      return c - d;
+    });
     setAllMemes(allMemes);
   };
 

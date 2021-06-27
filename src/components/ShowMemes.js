@@ -58,8 +58,14 @@ function ShowMemes({ results, fetchUsersMemes }) {
 
   return (
     <>
-      <Heading textAlign="center">Your Contributions</Heading>
-      <Stack spacing={7}>{memes}</Stack>
+      {results.length > 0 ? (
+        <Box align="center">
+          <Heading textAlign="center">Your Contributions</Heading>
+          <Stack spacing={7}>{memes}</Stack>
+        </Box>
+      ) : (
+        <Heading textAlign="center">You have not contributions</Heading>
+      )}
     </>
   );
 }
