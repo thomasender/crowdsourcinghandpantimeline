@@ -33,6 +33,7 @@ function UploadComponent({ fetchUsersMemes }) {
       alert("Please enter a description!");
       return;
     }
+
     setIsUploading(true);
     console.log("Saving...");
     const NewMeme = new Moralis.Object.extend("Memes");
@@ -79,7 +80,20 @@ function UploadComponent({ fetchUsersMemes }) {
   };
 
   const handleUpload = async () => {
+    if (name === "" || name === undefined) {
+      alert("Please enter a title!");
+      return;
+    }
+    if (description === "" || description === undefined) {
+      alert("Please enter a description!");
+      return;
+    }
+    if (file === undefined || file === null) {
+      alert("Please choose a file!");
+      return;
+    }
     setIsUploading(true);
+
     const MoralisFile = new Moralis.File(file.name, file);
     await MoralisFile.saveIPFS();
     const ipfs = await MoralisFile.ipfs();
