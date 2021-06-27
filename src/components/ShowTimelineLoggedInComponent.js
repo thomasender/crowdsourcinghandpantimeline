@@ -5,8 +5,11 @@ import { Moralis } from "moralis";
 function ShowTimelineLoggedInComponent({ allMemes, fetchAllMemes }) {
   let currentUser = Moralis.User.current();
 
-  useEffect(() => {
+  useEffect(async () => {
     fetchAllMemes();
+    let query = new Moralis.Query("Memes");
+    let subscription = await query.subscribe();
+    subscription.on("create", fetchAllMemes);
   }, []);
 
   const memes = allMemes.map((meme, i) => (
@@ -53,9 +56,9 @@ function ShowTimelineLoggedInComponent({ allMemes, fetchAllMemes }) {
             const toUpdate = await query.get(meme.id);
             console.log(toUpdate);
             await toUpdate.increment("votes");
-            toUpdate.save();
+            await toUpdate.save();
             await toUpdate.addUnique("voters", currentUser.id);
-            toUpdate.save();
+            await toUpdate.save();
             console.log(toUpdate);
             window.location.reload();
           }}
@@ -74,7 +77,7 @@ function ShowTimelineLoggedInComponent({ allMemes, fetchAllMemes }) {
             const query = new Moralis.Query(Memes);
             const toUpdate = await query.get(meme.id);
             await toUpdate.decrement("votes");
-            toUpdate.save();
+            await toUpdate.save();
             const voters = toUpdate.attributes.voters;
             const voterIndex = voters.indexOf(currentUser.id);
             if (voterIndex > -1) {
