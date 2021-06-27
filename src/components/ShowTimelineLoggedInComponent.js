@@ -24,16 +24,20 @@ function ShowTimelineLoggedInComponent({ allMemes, fetchAllMemes }) {
         <strong>Description: </strong>
         {meme.attributes.description && meme.attributes.description}
       </Text>
-      {meme.attributes.ipfs && (
+      {meme.attributes.ipfs !== undefined ? (
         <Text m="2">
           Link:{" "}
           <a href={meme.attributes.ipfs} target="_blank">
             {meme.attributes.ipfs}
           </a>
         </Text>
+      ) : (
+        ""
       )}
-      {meme.attributes.ipfs && (
+      {meme.attributes.ipfs !== undefined ? (
         <Image m="2" src={meme.attributes.ipfs} alt={meme.attributes.name} />
+      ) : (
+        ""
       )}
       <Text m="2">
         <strong>Votes: </strong>
@@ -41,23 +45,51 @@ function ShowTimelineLoggedInComponent({ allMemes, fetchAllMemes }) {
       </Text>
       {currentUser.attributes.username !==
         meme.attributes.owner.attributes.username &&
-        !meme.attributes.voters.includes(currentUser.id) && (
-          <Button
-            onClick={async (event) => {
-              const Memes = Moralis.Object.extend("Memes");
-              const query = new Moralis.Query(Memes);
-              const toUpdate = await query.get(meme.id);
-              await toUpdate.increment("votes");
-              toUpdate.save();
-              window.location.reload();
-            }}
-          >
-            Vote
-          </Button>
-        )}
-      {/* {currentUser.attributes.username !==
+      !meme.attributes.voters.includes(currentUser.id) ? (
+        <Button
+          onClick={async (event) => {
+            const Memes = Moralis.Object.extend("Memes");
+            const query = new Moralis.Query(Memes);
+            const toUpdate = await query.get(meme.id);
+            console.log(toUpdate);
+            await toUpdate.increment("votes");
+            toUpdate.save();
+            await toUpdate.addUnique("voters", currentUser.id);
+            toUpdate.save();
+            console.log(toUpdate);
+            window.location.reload();
+          }}
+        >
+          Vote
+        </Button>
+      ) : (
+        ""
+      )}
+      {currentUser.attributes.username !==
         meme.attributes.owner.attributes.username &&
-        meme.attributes.voters.includes(currentUser) && <Button>Unvote</Button>} */}
+      meme.attributes.voters.includes(currentUser.id) ? (
+        <Button
+          onClick={async (event) => {
+            const Memes = Moralis.Object.extend("Memes");
+            const query = new Moralis.Query(Memes);
+            const toUpdate = await query.get(meme.id);
+            await toUpdate.decrement("votes");
+            toUpdate.save();
+            const voters = toUpdate.attributes.voters;
+            const voterIndex = voters.indexOf(currentUser.id);
+            if (voterIndex > -1) {
+              voters.splice(voterIndex, 1);
+            }
+            await toUpdate.set("voters", voters);
+            await toUpdate.save();
+            window.location.reload();
+          }}
+        >
+          Unvote
+        </Button>
+      ) : (
+        ""
+      )}
     </Box>
   ));
 
