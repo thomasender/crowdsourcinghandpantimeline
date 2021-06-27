@@ -9,6 +9,11 @@ function ShowMemes({ results, fetchUsersMemes }) {
         <strong>Title: </strong>
         {meme.attributes.name}
       </Text>
+      <Text m="2" key={`dateOfConcern` + meme.id}>
+        <strong>Date of Concern: </strong>
+        {meme.attributes.dateOfConcern &&
+          meme.attributes.dateOfConcern.toLocaleDateString()}
+      </Text>
       {/* <Text key={`Owner` + meme.id}>
         <strong>Contributor: </strong>{" "}
         {meme.attributes.owner.attributes.username}
@@ -37,7 +42,7 @@ function ShowMemes({ results, fetchUsersMemes }) {
           window.location.reload();
         }}
       >
-        Delete Meme
+        Delete Contribution
       </Button>
     </Box>
   ));

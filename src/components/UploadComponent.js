@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Moralis } from "moralis";
 import { Box, Button, Input, Textarea, Text } from "@chakra-ui/react";
+import { Calendar } from "react-date-range";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 
 function UploadComponent({ user, fetchUsersMemes }) {
   const currentUser = Moralis.User.current();
@@ -9,6 +12,13 @@ function UploadComponent({ user, fetchUsersMemes }) {
   const [file, setFile] = useState();
   const [description, setDescription] = useState();
   const [isUploading, setIsUploading] = useState(false);
+  const [value, updateValue] = useState(new Date());
+  const [date, setDate] = useState(new Date());
+
+  function onChange(date) {
+    setDate(date);
+    console.log(date);
+  }
 
   const handleUpload = async () => {
     setIsUploading(true);
@@ -25,11 +35,13 @@ function UploadComponent({ user, fetchUsersMemes }) {
       newMeme.set("ipfs", ipfs);
       newMeme.set("hash", hash);
       newMeme.set("file", MoralisFile);
+      newMeme.set("dateOfConcern", date);
       newMeme.set("owner", currentUser);
       newMeme.set("name", name);
       newMeme.set("description", description);
       newMeme.set("votes", 0);
       newMeme.set("voters", []);
+
       await newMeme.save();
       await fetchUsersMemes();
       setIsUploading(false);
@@ -61,6 +73,11 @@ function UploadComponent({ user, fetchUsersMemes }) {
         onChange={(e) => setName(e.target.value)}
         textAlign="center"
       />
+      <Box align="center">
+        <Text>Pick the timestamp of concern</Text>
+        <Calendar date={date} onChange={onChange} />
+      </Box>
+
       <Textarea
         m="2"
         placeholder="Description"
@@ -77,10 +94,11 @@ function UploadComponent({ user, fetchUsersMemes }) {
           setFile(e.target.files[0]);
         }}
       />
-
-      <Button m="2" onClick={handleUpload}>
-        Submit
-      </Button>
+      <Box align="center">
+        <Button m="2" onClick={handleUpload}>
+          Submit Contribution
+        </Button>
+      </Box>
     </Box>
   );
 }

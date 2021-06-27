@@ -15,14 +15,15 @@ function ShowTimelineLoggedInComponent({ allMemes, fetchAllMemes }) {
         <strong>Title: </strong>
         {meme.attributes.name}
       </Text>
+      <Text m="2" key={`dateOfConcern` + meme.id}>
+        <strong>Date of Concern: </strong>
+        {meme.attributes.dateOfConcern &&
+          meme.attributes.dateOfConcern.toLocaleDateString()}
+      </Text>
       <Text key={`Description` + meme.id}>
         <strong>Description: </strong>
         {meme.attributes.description}
       </Text>
-      {/* <Text m="2" key={`Owner` + meme.id}>
-        <strong>Meme Owner: </strong>
-        {meme.attributes.owner.id}
-      </Text> */}
       <Text m="2">
         Link:{" "}
         <a href={meme.attributes.ipfs} target="_blank">
