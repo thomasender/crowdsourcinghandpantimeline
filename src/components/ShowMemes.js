@@ -68,7 +68,7 @@ function ShowMemes({ results, fetchUsersMemes }) {
           <Stack spacing={7}>{memes}</Stack>
         </Box>
       ) : (
-        <Heading textAlign="center">You have not contributions</Heading>
+        <Heading textAlign="center">You have no contributions</Heading>
       )}
     </>
   );
